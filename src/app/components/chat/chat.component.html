@@ -1,0 +1,108 @@
+<div class="chat-container">
+  <div class="chat-header">
+    <div class="model-selector">
+      <select [(ngModel)]="selectedModel" (change)="onModelChange()">
+        <option value="">Selecionar modelo...</option>
+        <option *ngFor="let model of models" [value]="model.name">
+          {{ model.name }}
+        </option>
+      </select>
+      <div
+        class="connection-status"
+        [class.connected]="ollamaService.connectionStatus()"
+      >
+        {{ ollamaService.connectionStatus() ? "Conectado" : "Desconectado" }}
+      </div>
+    </div>
+    <div class="chat-actions">
+      <button (click)="clearChat()" class="btn btn-secondary">
+        Limpar Chat
+      </button>
+      <button (click)="refreshModels()" class="btn btn-primary">
+        Atualizar Modelos
+      </button>
+    </div>
+  </div>
+
+  <div class="messages-container" #messagesContainer>
+    <div
+      *ngFor="let message of messages"
+      class="message"
+      [class.user-message]="message.role === 'user'"
+      [class.assistant-message]="message.role === 'assistant'"
+    >
+      <div class="message-role">
+        {{ message.role === "user" ? "Você" : "Assistente" }}
+      </div>
+      <div class="message-content">
+        <markdown [data]="message.content"></markdown>
+
+        <!-- Accordion para pensamentos nas mensagens do assistente -->
+        <div *ngIf="message.role === 'assistant'" class="accordion-container">
+          <div
+            class="accordion-header"
+            *ngIf="message.thought"
+            (click)="toggleThoughtsAccordion()"
+          >
+            <span>Pensamentos</span>
+            <span [class.expanded]="thoughtsAccordionExpanded">▼</span>
+          </div>
+          <div
+            class="accordion-content"
+            *ngIf="thoughtsAccordionExpanded && message.thought"
+          >
+            <div class="thoughts-streaming" *ngIf="isStreaming">
+              <markdown [data]="streamingThought"></markdown>
+            </div>
+            <div class="thoughts-final" *ngIf="!isStreaming">
+              <markdown [data]="message.thought"></markdown>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-time">
+        {{ message.timestamp | date : "HH:mm:ss" }}
+      </div>
+    </div>
+
+    <div *ngIf="isStreaming" class="message assistant-message streaming">
+      <div class="message-role">Assistente</div>
+      <div class="message-content">
+        <markdown [data]="streamingAnswer"></markdown>
+        <span class="cursor">|</span>
+
+        <!-- Accordion para pensamentos em streaming -->
+        <div class="accordion-container">
+          <div class="accordion-header" (click)="toggleThoughtsAccordion()">
+            <span>Pensamentos</span>
+            <span [class.expanded]="thoughtsAccordionExpanded">▼</span>
+          </div>
+          <div class="accordion-content" *ngIf="thoughtsAccordionExpanded">
+            <markdown [data]="streamingThought"></markdown>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="input-container">
+    <div class="input-wrapper">
+      <textarea
+        [(ngModel)]="inputMessage"
+        (keydown)="onKeyDown($event)"
+        placeholder="Digite sua mensagem... (Shift+Enter para nova linha, Enter para enviar)"
+        rows="3"
+        [disabled]="isStreaming || !selectedModel"
+      >
+      </textarea>
+      <button
+        (click)="sendMessage()"
+        [disabled]="!inputMessage.trim() || isStreaming || !selectedModel"
+        class="btn btn-primary send-btn"
+      >
+        {{ isStreaming ? "Enviando..." : "Enviar" }}
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,59 +1,233 @@
-# Llbchat
+# Ollama Angular Chat
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.15.
+Uma aplicação Angular standalone moderna para interagir com a API do Ollama, oferecendo uma interface completa para chat com modelos de IA.
 
-## Development server
+## ✨ Características
 
-To start a local development server, run:
+- **Interface Moderna**: Design responsivo e intuitivo
+- **Chat em Tempo Real**: Streaming de respostas para uma experiência fluida
+- **Gerenciamento de Modelos**: Baixe, visualize e remova modelos Ollama
+- **Configurações Avançadas**: Ajuste parâmetros como temperature, top-p, top-k
+- **Tema Escuro/Claro**: Interface adaptável às suas preferências
+- **Standalone Components**: Arquitetura Angular moderna
+- **TypeScript**: Totalmente tipado para melhor desenvolvimento
+
+## 🚀 Instalação e Uso
+
+### Pré-requisitos
+
+1. **Node.js** (v18 ou superior)
+2. **Angular CLI** (v17 ou superior)
+3. **Ollama** instalado e rodando (https://ollama.ai)
 
 ```bash
+# Instalar Angular CLI globalmente
+npm install -g @angular/cli
+
+# Verificar se o Ollama está rodando
+curl http://localhost:11434/api/tags
+```
+
+### Configuração do Projeto
+
+```bash
+# Criar novo projeto Angular
+ng new ollama-chat --standalone --routing=false --style=css
+
+# Navegar para o diretório
+cd ollama-chat
+
+# Instalar dependências
+npm install
+```
+
+### Estrutura de Arquivos
+
+```
+src/
+├── app/
+│   ├── components/
+│   │   ├── chat/
+│   │   │   └── chat.component.ts
+│   │   ├── model-manager/
+│   │   │   └── model-manager.component.ts
+│   │   └── settings/
+│   │       └── settings.component.ts
+│   ├── interfaces/
+│   │   └── ollama.interface.ts
+│   ├── services/
+│   │   └── ollama.service.ts
+│   └── app.component.ts
+├── main.ts
+├── styles.css
+└── index.html
+```
+
+### Executar a Aplicação
+
+```bash
+# Modo desenvolvimento
 ng serve
+
+# Com proxy para evitar CORS (recomendado)
+ng serve --proxy-config proxy.conf.json
+
+# Acesse http://localhost:4200
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## 🔧 Configuração do Ollama
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### Instalação do Ollama
 
 ```bash
-ng generate component component-name
+# Linux/macOS
+curl -fsSL https://ollama.ai/install.sh | sh
+
+# Windows
+# Baixe o instalador do site oficial
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### Baixar Modelos
 
 ```bash
-ng generate --help
+# Modelos recomendados
+ollama pull llama3        # Modelo geral (4.7GB)
+ollama pull mistral       # Modelo rápido (4.1GB)
+ollama pull codellama     # Para código (3.8GB)
+ollama pull phi3          # Modelo leve (2.3GB)
+
+# Listar modelos instalados
+ollama list
+
+# Executar Ollama (se não estiver rodando)
+ollama serve
 ```
 
-## Building
+### Configurar CORS (se necessário)
 
-To build the project run:
+Se encontrar problemas de CORS, configure o Ollama:
 
 ```bash
-ng build
+# Linux/macOS
+export OLLAMA_ORIGINS="*"
+ollama serve
+
+# Windows
+set OLLAMA_ORIGINS=*
+ollama serve
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## 🛠️ Funcionalidades
 
-## Running unit tests
+### 1. Chat Interface
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+- Streaming de respostas em tempo real
+- Histórico de conversas
+- Suporte a múltiplas linhas
+- Timestamps das mensagens
+- Rolagem automática
+
+### 2. Gerenciador de Modelos
+
+- Visualizar modelos instalados
+- Baixar novos modelos com barra de progresso
+- Remover modelos não utilizados
+- Informações detalhadas (tamanho, família, parâmetros)
+
+### 3. Configurações Avançadas
+
+- URL customizada do Ollama
+- Parâmetros de geração (temperature, top-p, top-k)
+- Tema claro/escuro
+- Exportar/importar configurações
+- Informações do sistema
+
+## 📡 API do Ollama
+
+A aplicação utiliza as seguintes APIs:
+
+- `GET /api/tags` - Listar modelos
+- `POST /api/chat` - Chat com streaming
+- `POST /api/generate` - Geração de texto
+- `POST /api/pull` - Baixar modelo
+- `DELETE /api/delete` - Remover modelo
+
+## 🎨 Personalização
+
+### Temas
+
+Modifique as variáveis CSS em `styles.css`:
+
+```css
+:root {
+  --primary-color: #007bff;
+  --secondary-color: #6c757d;
+  --success-color: #28a745;
+  --danger-color: #dc3545;
+  --warning-color: #ffc107;
+  --info-color: #17a2b8;
+}
+```
+
+### Componentes
+
+Todos os componentes são standalone e podem ser facilmente customizados ou reutilizados.
+
+## 🔍 Solução de Problemas
+
+### Ollama não está rodando
 
 ```bash
-ng test
+# Verificar status
+ps aux | grep ollama
+
+# Iniciar manualmente
+ollama serve
 ```
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
+### Erro de CORS
 
 ```bash
-ng e2e
+# Configurar CORS
+export OLLAMA_ORIGINS="http://localhost:4200"
+ollama serve
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+### Porta ocupada
 
-## Additional Resources
+```bash
+# Usar porta diferente
+ng serve --port 4201
+```
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## 📝 Build para Produção
+
+```bash
+# Build otimizado
+ng build --configuration production
+
+# Servir arquivos estáticos
+npx http-server dist/ollama-chat
+```
+
+## 🤝 Contribuição
+
+1. Fork o projeto
+2. Crie uma branch para sua feature
+3. Commit suas mudanças
+4. Push para a branch
+5. Abra um Pull Request
+
+## 📄 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo LICENSE para mais detalhes.
+
+## 🔗 Links Úteis
+
+- [Ollama Official](https://ollama.ai)
+- [Angular Documentation](https://angular.io)
+- [TypeScript Documentation](https://typescriptlang.org)
+
+---
+
+**Desenvolvido com ❤️ usando Angular e TypeScript**

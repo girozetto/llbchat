@@ -1,0 +1,210 @@
+<div class="settings-container">
+  <div class="settings-header">
+    <h2>Configurações</h2>
+    <div class="header-actions">
+      <button (click)="onReset()" class="btn btn-secondary">
+        Restaurar Padrões
+      </button>
+      <button (click)="onSave()" class="btn btn-primary">
+        Salvar Configurações
+      </button>
+    </div>
+  </div>
+
+  <div class="settings-sections">
+    <!-- Configurações de Conexão -->
+    <div class="settings-section">
+      <h3>🔗 Conexão</h3>
+      <div class="setting-item">
+        <label for="ollama-url">URL do Ollama:</label>
+        <input
+          id="ollama-url"
+          type="text"
+          [(ngModel)]="settings.ollamaUrl"
+          placeholder="http://localhost:11434"
+        />
+        <small>URL base para conectar ao servidor Ollama</small>
+      </div>
+    </div>
+
+    <!-- Configurações de Modelo -->
+    <div class="settings-section">
+      <h3>🤖 Modelo Padrão</h3>
+      <div class="setting-item">
+        <label for="default-model">Modelo Padrão:</label>
+        <input
+          id="default-model"
+          type="text"
+          [(ngModel)]="settings.defaultModel"
+          placeholder="llama3"
+        />
+        <small>Modelo que será selecionado automaticamente</small>
+      </div>
+    </div>
+
+    <!-- Parâmetros de Geração -->
+    <div class="settings-section">
+      <h3>⚡ Parâmetros de Geração</h3>
+
+      <div class="setting-item">
+        <label for="temperature"
+          >Temperature ({{ settings.temperature }}):</label
+        >
+        <input
+          id="temperature"
+          type="range"
+          min="0"
+          max="2"
+          step="0.1"
+          [(ngModel)]="settings.temperature"
+          class="slider"
+        />
+        <small
+          >Controla a criatividade das respostas (0 = determinístico, 2 = muito
+          criativo)</small
+        >
+      </div>
+
+      <div class="setting-item">
+        <label for="top-p">Top P ({{ settings.topP }}):</label>
+        <input
+          id="top-p"
+          type="range"
+          min="0"
+          max="1"
+          step="0.05"
+          [(ngModel)]="settings.topP"
+          class="slider"
+        />
+        <small
+          >Filtragem de núcleo (0.9 é recomendado para a maioria dos
+          casos)</small
+        >
+      </div>
+
+      <div class="setting-item">
+        <label for="top-k">Top K ({{ settings.topK }}):</label>
+        <input
+          id="top-k"
+          type="range"
+          min="1"
+          max="100"
+          step="1"
+          [(ngModel)]="settings.topK"
+          class="slider"
+        />
+        <small>Limita as opções de próxima palavra (40 é um bom padrão)</small>
+      </div>
+
+      <div class="setting-item">
+        <label for="max-tokens">Máximo de Tokens:</label>
+        <input
+          id="max-tokens"
+          type="number"
+          min="1"
+          max="8192"
+          [(ngModel)]="settings.maxTokens"
+        />
+        <small>Número máximo de tokens na resposta</small>
+      </div>
+    </div>
+
+    <!-- Configurações de Interface -->
+    <div class="settings-section">
+      <h3>🎨 Interface</h3>
+
+      <div class="setting-item">
+        <label for="theme">Tema:</label>
+        <select id="theme" [(ngModel)]="settings.theme">
+          <option value="light">Claro</option>
+          <option value="dark">Escuro</option>
+        </select>
+        <small>Aparência da interface</small>
+      </div>
+
+      <div class="setting-item checkbox-item">
+        <label>
+          <input type="checkbox" [(ngModel)]="settings.autoScroll" />
+          Rolagem Automática
+        </label>
+        <small>Rola automaticamente para a última mensagem</small>
+      </div>
+
+      <div class="setting-item checkbox-item">
+        <label>
+          <input type="checkbox" [(ngModel)]="settings.showTimestamps" />
+          Mostrar Horários
+        </label>
+        <small>Exibe o horário de cada mensagem</small>
+      </div>
+
+      <div class="setting-item checkbox-item">
+        <label>
+          <input type="checkbox" [(ngModel)]="settings.streamingEnabled" />
+          Streaming Habilitado
+        </label>
+        <small>Recebe respostas em tempo real (recomendado)</small>
+      </div>
+    </div>
+
+    <!-- Informações do Sistema -->
+    <div class="settings-section">
+      <h3>📊 Informações do Sistema</h3>
+      <div class="system-info">
+        <div class="info-item">
+          <strong>Status da Conexão:</strong>
+          <span
+            [class]="
+              ollamaService.connectionStatus()
+                ? 'status-connected'
+                : 'status-disconnected'
+            "
+          >
+            {{
+              ollamaService.connectionStatus() ? "Conectado" : "Desconectado"
+            }}
+          </span>
+        </div>
+        <div class="info-item">
+          <strong>Versão do Angular:</strong>
+          <span>{{ settingsService.angularInfo() }}</span>
+        </div>
+        <div class="info-item">
+          <strong>Navegador:</strong>
+          <span>{{ settingsService.browserInfo() }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Configurações Avançadas -->
+    <div class="settings-section">
+      <h3>🔧 Avançado</h3>
+
+      <div class="setting-item">
+        <button (click)="onClearCache()" class="btn btn-warning">
+          Limpar Cache
+        </button>
+        <small>Remove todos os dados em cache da aplicação</small>
+      </div>
+
+      <div class="setting-item">
+        <button (click)="onExport()" class="btn btn-info">
+          Exportar Configurações
+        </button>
+        <small>Baixa um arquivo com suas configurações atuais</small>
+      </div>
+
+      <div class="setting-item">
+        <label for="import-settings">Importar Configurações:</label>
+        <input
+          id="import-settings"
+          type="file"
+          accept=".json"
+          (change)="onImport($event)"
+          #fileInput
+        />
+        <small>Carrega configurações de um arquivo JSON</small>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,78 @@
+<div class="model-manager">
+  <div class="header">
+    <h2>Gerenciador de Modelos</h2>
+    <button (click)="refreshModels()" class="btn btn-primary">
+      Atualizar Lista
+    </button>
+  </div>
+
+  <div class="pull-model-section">
+    <h3>Baixar Novo Modelo</h3>
+    <div class="pull-form">
+      <input
+        [(ngModel)]="newModelName"
+        placeholder="Nome do modelo (ex: llama3, mistral)"
+        class="model-input"
+      />
+      <button
+        (click)="pullModel()"
+        [disabled]="!newModelName.trim() || isPulling"
+        class="btn btn-success"
+      >
+        {{ isPulling ? "Baixando..." : "Baixar" }}
+      </button>
+    </div>
+
+    <div *ngIf="isPulling" class="progress-container">
+      <div class="progress-info">
+        <div>Status: {{ pullProgress?.status }}</div>
+        <div *ngIf="pullProgress?.total">
+          Progresso: {{ getProgressPercentage() }}%
+        </div>
+      </div>
+      <div class="progress-bar">
+        <div
+          class="progress-fill"
+          [style.width.%]="getProgressPercentage()"
+        ></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="models-section">
+    <h3>Modelos Instalados</h3>
+    <div class="models-grid">
+      <div *ngFor="let model of models" class="model-card">
+        <div class="model-header">
+          <h4>{{ model.name }}</h4>
+          <button
+            (click)="deleteModel(model.name)"
+            class="btn btn-danger btn-small"
+            [disabled]="isDeleting.has(model.name)"
+          >
+            {{ isDeleting.has(model.name) ? "Removendo..." : "Remover" }}
+          </button>
+        </div>
+
+        <div class="model-details">
+          <div><strong>Tamanho:</strong> {{ formatBytes(model.size) }}</div>
+          <div>
+            <strong>Família:</strong> {{ model.details.family || "N/A" }}
+          </div>
+          <div>
+            <strong>Parâmetros:</strong>
+            {{ model.details.parameter_size || "N/A" }}
+          </div>
+          <div>
+            <strong>Modificado:</strong>
+            {{ model.modified_at | date : "short" }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="models.length === 0" class="no-models">
+      Nenhum modelo instalado
+    </div>
+  </div>
+</div>

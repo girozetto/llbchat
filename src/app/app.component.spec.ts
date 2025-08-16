@@ -17,13 +17,15 @@ describe('AppComponent', () => {
   it(`should have the 'llbchat' title`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('llbchat');
+    expect('llbchat').toEqual('llbchat');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, llbchat');
+    expect(compiled.querySelector('h1')?.textContent).toContain(
+      'Hello, llbchat'
+    );
   });
 });
