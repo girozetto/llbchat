@@ -1,4 +1,4 @@
-# Ollama Angular Chat
+# LLBChat with Ollama and Angular
 
 Uma aplicação Angular standalone moderna para interagir com a API do Ollama, oferecendo uma interface completa para chat com modelos de IA.
 
